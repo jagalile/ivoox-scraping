@@ -1,5 +1,5 @@
 # ivoox-scraping
-Scrapes ivoox to download podcasts
+Scrapes the [ivoox](https://www.ivoox.com/) website to download the podcast episode provided.
 
 ## Prerequisites
 
@@ -16,4 +16,10 @@ Install tou chromedirver version from https://chromedriver.chromium.org/download
 
 ## Using ivoox-scraping
 
-`python3 main.py <podcast_key> <'Chapter name or partial chapter name'>`
+`python3 main.py <podcast_key> '<Chapter name or partial chapter name>'`
+
+## Configuration file
+
+To add new podcast url you only need to modify config file (config.ini). Under `[PODCAST_URL]` section.
+
+`<podcast_key> = '<podcast_url>'`
