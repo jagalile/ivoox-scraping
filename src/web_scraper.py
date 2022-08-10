@@ -33,7 +33,6 @@ class WebScraper():
 
     @property
     def _chromedriver_driver(self):
-        
         try:
             return webdriver.Chrome(self._driver_path(), chrome_options=self.options)
         except:
