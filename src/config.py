@@ -12,21 +12,20 @@ class Config():
         config.sections()
         
         return config
-        
-    def get_podcast_url(self, key):
+    
+    def _get_section_key_value(self, section, key):
         config = self._load_config_file()
-        
         try:
-            return config['PODCAST_URL'][key]
-        except NameError:
-            print('There is no podcast named {}'.format(key))
-            raise
-        
-    def get_path(self, key):
-        config = self._load_config_file()
-        
-        try:
-            return config['PATHS'][key]
+            return config[section][key]
         except NameError:
             ('There is no path named {}'.format(key))
             raise
+        
+    def get_podcast_url(self, key):
+        return self._get_section_key_value('PODCAST_URL', key)
+        
+    def get_path(self, key):
+        return self._get_section_key_value('PATHS', key)
+        
+    def get_driver(self, key):
+        return self._get_section_key_value('CHROME_DRIVER', key)
