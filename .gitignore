@@ -1,6 +1,7 @@
 # Custom
 chromedriver/
 .vscode/
+downloaded_podcast_audio/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
