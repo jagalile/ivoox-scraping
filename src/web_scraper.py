@@ -7,16 +7,18 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 
 from src.config import Config
+from src.driver import Driver
 
 
 class WebScraper():
     
     def __init__(self, headless=True, muted=True):
+        self.config = Config()
+        self.driver_tools = Driver()
         self.headless = headless
         self.muted = muted
         self.options = self._set_webdriver_options
         self.driver = self._chromedriver_driver
-        self.config = Config()
 
     @property
     def _set_webdriver_options(self):
@@ -31,8 +33,11 @@ class WebScraper():
 
     @property
     def _chromedriver_driver(self):
-        
-        return webdriver.Chrome(self._driver_path(), chrome_options=self.options)
+        try:
+            return webdriver.Chrome(self._driver_path(), chrome_options=self.options)
+        except:
+            self.driver_tools.get_driver()
+            return webdriver.Chrome(self._driver_path(), chrome_options=self.options)
 
     def _driver_path(self):
         driver_path = os.path.join(os.path.dirname(__file__).replace('src', 'chromedriver'), 'chromedriver')
