@@ -22,10 +22,10 @@ parser.add_argument(
 args = vars(parser.parse_args())
 
 def main(podcast_name, chapter):
-    driver = Driver()
-    driver.get_driver()
-    #dp = DownloadPodcast(podcast_name, chapter_search_name=chapter)
-    #dp.download_podcast()
+    # driver = Driver()
+    # driver.get_driver()
+    dp = DownloadPodcast(podcast_name, chapter_search_name=chapter)
+    dp.download_podcast()
     
 
 main(args['podcast_name'][0], args['chapter_name'][0])

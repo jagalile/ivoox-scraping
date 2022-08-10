@@ -2,6 +2,7 @@ import os
 from sys import platform
 import requests
 import zipfile
+from requests.exceptions import InvalidURL
 
 from src.config import Config
 
@@ -67,22 +68,28 @@ class Driver():
             so = self._WIN32
         else: raise
         
-        download_url = driver_url.format(self.browser_version, so)
-        self._create_driver_folder()
-        self.driver_file = os.path.join(self._CHROMEDRIVER_PATH, 'chromedriver.zip')
-        
-        response = requests.get(download_url)
-        open(self.driver_file, 'wb').write(response.content)
+        try:
+            download_url = driver_url.format(self.browser_version, so)
+            self._create_driver_folder()
+            self.driver_file = os.path.join(self._CHROMEDRIVER_PATH, 'chromedriver.zip')
+            
+            response = requests.get(download_url)
+            open(self.driver_file, 'wb').write(response.content)
+        except InvalidURL:
+            print('Invalid chromedriver url {}'.format(driver_url.format(self.browser_version, so)))
         
     def _create_driver_folder(self):
         if not os.path.exists(self._CHROMEDRIVER_PATH):
             os.mkdir(self._CHROMEDRIVER_PATH)
         
-    def extract_file(self):
+    def _extract_file(self):
+        if self.driver_file is None:
+            print('Driver file not found')
+            raise
         with zipfile.ZipFile(self.driver_file, 'r') as zip_ref:
             zip_ref.extractall(self._CHROMEDRIVER_PATH)
         os.remove(self.driver_file)
 
     def get_driver(self):
         self._download_driver()
-        self.extract_file()
+        self._extract_file()
