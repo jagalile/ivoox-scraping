@@ -1,8 +1,8 @@
 from colorama import Fore
 
-from src.web_scraper import WebScraper
 from src.audio import Audio
 from src.config import Config
+from src.web_scraper import WebScraper
 
 
 class DownloadPodcast():
@@ -40,8 +40,8 @@ class DownloadPodcast():
                 if page_count < 10:
                     print('Searching podcast...')
                     page_count += 1
-                    next = self.web_scraping.find_element_by_xpath('//*[@id="main"]/div/div[4]/div/nav/ul/li[12]/a')
-                    self.web_scraping.click_element(next)
+                    next_page = self.web_scraping.find_element_by_xpath('//*[@id="main"]/div/div[4]/div/nav/ul/li[12]/a')
+                    self.web_scraping.click_element(next_page)
                 else:
                     raise Exception('No found podcast with title: {}'.format(self.chapter_search_name))
             else:

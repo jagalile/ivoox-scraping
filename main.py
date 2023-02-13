@@ -1,8 +1,6 @@
 import argparse
 
 from src.download_podcast import DownloadPodcast
-from src.driver import Driver
-
 
 parser = argparse.ArgumentParser(description='Download podcast from Ivoox.')
 parser.add_argument(
@@ -22,9 +20,8 @@ parser.add_argument(
 
 args = vars(parser.parse_args())
 
+
 def main(podcast_name, chapter):
-    # driver = Driver()
-    # driver.get_driver()
     dp = DownloadPodcast(podcast_name, chapter_search_name=chapter)
     dp.download_podcast()
     

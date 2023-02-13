@@ -1,9 +1,10 @@
 import os
+
 import requests
 from colorama import Fore
 
 
-class Audio():
+class Audio:
 
     _DOWNLOADED_AUDIO_PATH = os.path.join(os.path.dirname(__file__).replace('src', 'downloaded_podcast_audio'))
     

@@ -1,25 +1,32 @@
 import os
-from sys import platform
-import requests
+import stat
+import xml.etree.ElementTree as elemTree
 import zipfile
+from sys import platform
+
+import requests
 from requests.exceptions import InvalidURL
 
 from src.config import Config
 
 
 class Driver():
-    
-    _LINUX = 'chromedriver_linux64.zip'
-    _DARWIN = 'chromedriver_mac64.zip'
-    _WIN32 = 'chromedriver_win32.zip'
+
+    _SO_VERSIONS = {
+        'linux': 'chromedriver_linux64.zip',
+        'linux2': 'chromedriver_linux64.zip',
+        'darwin': 'chromedriver_mac64.zip',
+        'win32': 'chromedriver_win32.zip',
+    }
     _CHROMEDRIVER_PATH = os.path.join(os.path.dirname(__file__).replace('src', 'chromedriver'))
     
     def __init__(self):
         self.config = Config()
-        self.browser_version = self._get_chrome_version()
+        self.browser_version = self._get_chrome_version
         self.driver_file = None
-    
-    def _extract_version(self, output):
+
+    @staticmethod
+    def _extract_version(output):
         try:
             google_version = ''
             for letter in output[output.rindex('DisplayVersion    REG_SZ') + 24:]:
@@ -27,10 +34,11 @@ class Driver():
                     google_version += letter
                 else:
                     break
-            return(google_version.strip())
+            return google_version.strip()
         except TypeError:
             return
 
+    @property
     def _get_chrome_version(self):
         version = None
         install_path = None
@@ -53,30 +61,32 @@ class Driver():
         except Exception as ex:
             print(ex)
 
-        version = os.popen(f"{install_path} --version").read().strip('Google Chrome ').strip() if install_path else version
+        version = os.popen(f"{install_path} --version").read().strip('Google Chrome ').strip() \
+            if install_path else version
 
         return version
+
+    @staticmethod
+    def _pre_format_chrome_version(version):
+        version = version.rsplit('.', 1)[0]
+        parsed_version = "{}.matched_version".format(version)
+        return parsed_version
     
     def _download_driver(self):
         driver_url = self.config.get_driver('path')
-        
-        if platform == "linux" or platform == "linux2":
-            so = self._LINUX
-        elif platform == "darwin":
-            so = self._DARWIN
-        elif platform == "win32":
-            so = self._WIN32
-        else: raise
+
+        download_url = driver_url.format(self._get_valid_chromedriver_version(), self._SO_VERSIONS[platform])
         
         try:
-            download_url = driver_url.format(self.browser_version, so)
             self._create_driver_folder()
             self.driver_file = os.path.join(self._CHROMEDRIVER_PATH, 'chromedriver.zip')
             
             response = requests.get(download_url)
             open(self.driver_file, 'wb').write(response.content)
         except InvalidURL:
-            print('Invalid chromedriver url {}'.format(driver_url.format(self.browser_version, so)))
+            print('Invalid chromedriver url {}'.format(
+                driver_url.format(self.browser_version, self._SO_VERSIONS[platform])
+            ))
         
     def _create_driver_folder(self):
         if not os.path.exists(self._CHROMEDRIVER_PATH):
@@ -89,6 +99,18 @@ class Driver():
         with zipfile.ZipFile(self.driver_file, 'r') as zip_ref:
             zip_ref.extractall(self._CHROMEDRIVER_PATH)
         os.remove(self.driver_file)
+        self._set_up_chromedriver_permissions()
+
+    def _get_valid_chromedriver_version(self):
+        response = requests.get('https://chromedriver.storage.googleapis.com')
+        root = elemTree.fromstring(response.content)
+        for k in root.iter('{http://doc.s3.amazonaws.com/2006-03-01}Key'):
+            if self.browser_version.split('.')[0] in k.text.split('.')[0]:
+                return k.text.split('/')[0]
+
+    def _set_up_chromedriver_permissions(self):
+        for file in os.listdir(self._CHROMEDRIVER_PATH):
+            os.chmod(os.path.join(self._CHROMEDRIVER_PATH, file), stat.S_IEXEC)
 
     def get_driver(self):
         self._download_driver()

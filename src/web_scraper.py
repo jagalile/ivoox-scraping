@@ -1,7 +1,5 @@
-from genericpath import isfile
 import os
 
-from click import option
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By

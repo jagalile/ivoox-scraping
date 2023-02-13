@@ -1,9 +1,10 @@
 import os
+
 import configparser
 
 
-class Config():
-    
+class Config:
+
     _CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__).replace('src', ''), 'config.ini')
     
     def _load_config_file(self):
