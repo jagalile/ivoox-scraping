@@ -12,7 +12,7 @@ parser.add_argument(
     required=True,
 )
 parser.add_argument(
-    '-c',
+    '-e',
     metavar='Episode name',
     type=str,
     nargs='+',
@@ -39,4 +39,4 @@ def main(podcast_name, episode_name, latest_episode):
     dp.download_episode()
 
 
-main(args.p, args.c, args.latest)
+main(args.p, args.e, args.latest)
