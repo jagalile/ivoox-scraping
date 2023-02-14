@@ -1,6 +1,8 @@
 import argparse
 
 from src.download_podcast import DownloadPodcast
+from src.driver import Driver
+
 
 parser = argparse.ArgumentParser(description='Download podcast from Ivoox.')
 parser.add_argument(
@@ -37,6 +39,5 @@ def main(podcast_name, episode_name, latest_episode):
     episode_name = episode_name[0] if episode_name else None
     dp = DownloadPodcast(podcast_name, episode_name, latest_episode)
     dp.download_episode()
-
 
 main(args.p, args.e, args.latest)
