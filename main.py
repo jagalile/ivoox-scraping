@@ -6,27 +6,38 @@ from src.driver import Driver
 
 parser = argparse.ArgumentParser(description='Download podcast from Ivoox.')
 parser.add_argument(
-        'podcast_name', 
-        metavar='podcast_name', 
-        type=str, 
-        nargs='+', 
-        help='alias for podcast name'
-    )
+    '-p',
+    metavar='Podcast name',
+    type=str,
+    nargs='+',
+    help='Alias for podcast name',
+    required=True,
+)
 parser.add_argument(
-        'chapter_name', 
-        metavar='chapter_name', 
-        type=str, 
-        nargs='+', 
-        help='name of podcast chapter'
-    )
+    '-e',
+    metavar='Episode name',
+    type=str,
+    nargs='+',
+    help='Full or partial name of podcast episode, should be in quotation marks',
+)
+parser.add_argument(
+    '-latest',
+    action='store_true',
+    help='Downloads the latest episode from provided podcast',
+)
+# parser.add_argument(
+#     '-all',
+#     action='store_true',
+#     help='Downloads all episodes from provided podcast',
+# )
 
-args = vars(parser.parse_args())
+args = parser.parse_args()
 
-def main(podcast_name, chapter):
-    # driver = Driver()
-    # driver.get_driver()
-    dp = DownloadPodcast(podcast_name, chapter_search_name=chapter)
-    dp.download_podcast()
-    
 
-main(args['podcast_name'][0], args['chapter_name'][0])
+def main(podcast_name, episode_name, latest_episode):
+    podcast_name = podcast_name[0] if podcast_name else None
+    episode_name = episode_name[0] if episode_name else None
+    dp = DownloadPodcast(podcast_name, episode_name, latest_episode)
+    dp.download_episode()
+
+main(args.p, args.e, args.latest)

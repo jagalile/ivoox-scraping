@@ -1,7 +1,5 @@
-from genericpath import isfile
 import os
 
-from click import option
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
@@ -10,7 +8,7 @@ from src.config import Config
 from src.driver import Driver
 
 
-class WebScraper():
+class WebScraper:
     
     def __init__(self, headless=True, muted=True):
         self.config = Config()
@@ -52,7 +50,7 @@ class WebScraper():
 
     def click_element(self, element):
         try:
-            element = self.driver.execute_script("arguments[0].click();", element)
+            self.driver.execute_script("arguments[0].click();", element)
         except WebDriverException:
             print('Element is not clickable')
      
@@ -62,8 +60,11 @@ class WebScraper():
     def find_element_by_xpath(self, xpath):
         return self.driver.find_element(By.XPATH, xpath)
 
-    def find_element_by_id(self, id):
-        return self.driver.find_element(By.ID, id)
+    def find_elements_by_xpath(self, xpath):
+        return self.driver.find_elements(By.XPATH, xpath)
+
+    def find_element_by_id(self, html_id):
+        return self.driver.find_element(By.ID, html_id)
     
     def close_connection(self):
         self.driver.quit()
