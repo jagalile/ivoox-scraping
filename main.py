@@ -4,26 +4,40 @@ from src.download_podcast import DownloadPodcast
 
 parser = argparse.ArgumentParser(description='Download podcast from Ivoox.')
 parser.add_argument(
-        'podcast_name', 
-        metavar='podcast_name', 
-        type=str, 
-        nargs='+', 
-        help='alias for podcast name'
-    )
+    '-p',
+    metavar='Podcast name',
+    type=str,
+    nargs='+',
+    help='alias for podcast name',
+    required=True,
+)
 parser.add_argument(
-        'chapter_name', 
-        metavar='chapter_name', 
-        type=str, 
-        nargs='+', 
-        help='name of podcast chapter'
-    )
+    '-c',
+    metavar='Chapter name',
+    type=str,
+    nargs='+',
+    help='full or partial name of podcast chapter, should be in quotation marks',
+)
+parser.add_argument(
+    '-n',
+    metavar='Number of chapters',
+    type=int,
+    nargs='+',
+    help='full or partial name of podcast chapter, should be in quotation marks',
+)
 
-args = vars(parser.parse_args())
+args = parser.parse_args()
 
 
-def main(podcast_name, chapter):
-    dp = DownloadPodcast(podcast_name, chapter_search_name=chapter)
+def main(podcast_name, chapter, chapters):
+    last = None
+    podcast_name = podcast_name[0] if podcast_name else None
+    chapter = chapter[0] if chapter else None
+    chapters = chapters[0] if chapters else None
+    if not chapter and not chapters:
+        last = True
+    dp = DownloadPodcast(podcast_name, chapter, chapters, last)
     dp.download_podcast()
-    
 
-main(args['podcast_name'][0], args['chapter_name'][0])
+
+main(args.p, args.c, args.n)

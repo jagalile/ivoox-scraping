@@ -8,7 +8,11 @@ Scrapes the [ivoox](https://www.ivoox.com/) website to download the podcast epis
 ## Installation
 ### Chromedriver
 
-Install tou chromedirver version from https://chromedriver.chromium.org/downloads in 'chromedriver' folder in root project directory
+Chromedriver file is automatically updated when running the script.
+
+#### Manually instalation
+
+Install a compatible chromedirver version with your browser from https://chromedriver.chromium.org/downloads in 'chromedriver' folder in root project directory
 
 ### Requirements
 
@@ -16,7 +20,13 @@ Install tou chromedirver version from https://chromedriver.chromium.org/download
 
 ## Using ivoox-scraping
 
-`python3 main.py <podcast_key> '<Chapter name or partial chapter name>'`
+Download expecific podcast chapter
+
+`python3 main.py -p <podcast_key> -c '<Chapter name or partial chapter name>'`
+
+Download the latest chapter of specific podcast
+
+`python3 main.py -p <podcast_key>`
 
 ## Configuration file
 

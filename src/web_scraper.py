@@ -10,7 +10,7 @@ from src.driver import Driver
 
 class WebScraper():
     
-    def __init__(self, headless=True, muted=True):
+    def __init__(self, headless=False, muted=True):
         self.config = Config()
         self.driver_tools = Driver()
         self.headless = headless
@@ -50,7 +50,7 @@ class WebScraper():
 
     def click_element(self, element):
         try:
-            element = self.driver.execute_script("arguments[0].click();", element)
+            self.driver.execute_script("arguments[0].click();", element)
         except WebDriverException:
             print('Element is not clickable')
      
@@ -60,8 +60,8 @@ class WebScraper():
     def find_element_by_xpath(self, xpath):
         return self.driver.find_element(By.XPATH, xpath)
 
-    def find_element_by_id(self, id):
-        return self.driver.find_element(By.ID, id)
+    def find_element_by_id(self, html_id):
+        return self.driver.find_element(By.ID, html_id)
     
     def close_connection(self):
         self.driver.quit()
