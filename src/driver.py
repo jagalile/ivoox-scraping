@@ -10,7 +10,7 @@ from requests.exceptions import InvalidURL
 from src.config import Config
 
 
-class Driver():
+class Driver:
 
     _SO_VERSIONS = {
         'linux': 'chromedriver_linux64.zip',

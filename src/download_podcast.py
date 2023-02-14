@@ -5,7 +5,7 @@ from src.config import Config
 from src.web_scraper import WebScraper
 
 
-class DownloadPodcast():
+class DownloadPodcast:
     
     def __init__(self, podcast_name, chapter_search_name, chapters, last=False):
         self.podcast_name = podcast_name.lower()

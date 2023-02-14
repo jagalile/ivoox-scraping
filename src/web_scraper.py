@@ -8,9 +8,9 @@ from src.config import Config
 from src.driver import Driver
 
 
-class WebScraper():
+class WebScraper:
     
-    def __init__(self, headless=False, muted=True):
+    def __init__(self, headless=True, muted=True):
         self.config = Config()
         self.driver_tools = Driver()
         self.headless = headless
