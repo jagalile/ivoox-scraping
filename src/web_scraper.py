@@ -60,6 +60,9 @@ class WebScraper:
     def find_element_by_xpath(self, xpath):
         return self.driver.find_element(By.XPATH, xpath)
 
+    def find_elements_by_xpath(self, xpath):
+        return self.driver.find_elements(By.XPATH, xpath)
+
     def find_element_by_id(self, html_id):
         return self.driver.find_element(By.ID, html_id)
     

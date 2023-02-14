@@ -19,6 +19,7 @@ class Driver:
         'win32': 'chromedriver_win32.zip',
     }
     _CHROMEDRIVER_PATH = os.path.join(os.path.dirname(__file__).replace('src', 'chromedriver'))
+    _CHROMEDRIVER_VERSIONS_URL = 'https://chromedriver.storage.googleapis.com'
     
     def __init__(self):
         self.config = Config()
@@ -75,13 +76,13 @@ class Driver:
     def _download_driver(self):
         driver_url = self.config.get_driver('path')
 
-        download_url = driver_url.format(self._get_valid_chromedriver_version(), self._SO_VERSIONS[platform])
+        download_driver_url = driver_url.format(self._get_existing_chromedriver_version(), self._SO_VERSIONS[platform])
         
         try:
             self._create_driver_folder()
             self.driver_file = os.path.join(self._CHROMEDRIVER_PATH, 'chromedriver.zip')
             
-            response = requests.get(download_url)
+            response = requests.get(download_driver_url)
             open(self.driver_file, 'wb').write(response.content)
         except InvalidURL:
             print('Invalid chromedriver url {}'.format(
@@ -92,26 +93,26 @@ class Driver:
         if not os.path.exists(self._CHROMEDRIVER_PATH):
             os.mkdir(self._CHROMEDRIVER_PATH)
         
-    def _extract_file(self):
+    def _extract_downloaded_driver_file(self):
         if self.driver_file is None:
             print('Driver file not found')
             raise
         with zipfile.ZipFile(self.driver_file, 'r') as zip_ref:
             zip_ref.extractall(self._CHROMEDRIVER_PATH)
         os.remove(self.driver_file)
-        self._set_up_chromedriver_permissions()
+        self._set_up_driver_file_permissions()
 
-    def _get_valid_chromedriver_version(self):
-        response = requests.get('https://chromedriver.storage.googleapis.com')
+    def _get_existing_chromedriver_version(self):
+        response = requests.get(self._CHROMEDRIVER_VERSIONS_URL)
         root = elemTree.fromstring(response.content)
         for k in root.iter('{http://doc.s3.amazonaws.com/2006-03-01}Key'):
             if self.browser_version.split('.')[0] in k.text.split('.')[0]:
                 return k.text.split('/')[0]
 
-    def _set_up_chromedriver_permissions(self):
+    def _set_up_driver_file_permissions(self):
         for file in os.listdir(self._CHROMEDRIVER_PATH):
             os.chmod(os.path.join(self._CHROMEDRIVER_PATH, file), stat.S_IEXEC)
 
     def get_driver(self):
         self._download_driver()
-        self._extract_file()
+        self._extract_downloaded_driver_file()
