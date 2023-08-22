@@ -7,6 +7,8 @@ from selenium.webdriver.chrome.service import Service
 
 from src.config import Config
 
+from pyvirtualdisplay import Display
+
 
 class WebScraper:
 
@@ -14,8 +16,15 @@ class WebScraper:
         self.config = Config()
         self.headless = headless
         self.muted = muted
-        self.options = self._set_webdriver_options
 
+        # set xvfb display since there is no GUI in docker container.
+        try:
+            display = Display(visible=0, size=(800, 600))
+            display.start()
+        except Exception as e:
+            print('Could not use xvfb display, will try to continue anyway. Error: {}'.format(e))
+
+        self.options = self._set_webdriver_options
         service = Service()
         self.driver = webdriver.Chrome(service=service, options=self.options)
 
@@ -27,6 +36,8 @@ class WebScraper:
             options.add_argument("--headless")
         if self.muted:
             options.add_argument("--mute-audio")
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
         return options
 
     def start_connection(self, url):
