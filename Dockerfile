@@ -1,9 +1,6 @@
 FROM python:3.10-slim
 
 WORKDIR /app
-COPY . /app/
-
-RUN pip install --no-cache-dir -r requirements.txt
 
 # Download and install Chrome browser
 RUN apt-get update -qq \
@@ -20,6 +17,10 @@ RUN apt-get update -qq && apt-get install -y xvfb \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 RUN pip install pyvirtualdisplay
+
+COPY . /app/
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Specify the command to run your application with arguments
 ENTRYPOINT [ "python", "main.py" ]
