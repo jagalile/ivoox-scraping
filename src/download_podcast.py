@@ -6,7 +6,7 @@ from src.web_scraper import WebScraper
 
 
 class DownloadPodcast:
-    
+
     def __init__(self, podcast_name, episode_name, latest_episode):
         self.podcast_name = podcast_name.lower()
         self.episode_search_name = episode_name
@@ -16,12 +16,12 @@ class DownloadPodcast:
         self.podcast_url = self.get_podcast_url
         self.web_scraping = WebScraper()
         self.audio = Audio()
-        
+
     @property
     def get_podcast_url(self):
 
         return self.config.get_podcast_url(self.podcast_name)
-            
+
     def download_episode(self):
         self.web_scraping.start_connection(self.podcast_url)
         if self.latest_episode:
@@ -35,9 +35,19 @@ class DownloadPodcast:
         self.web_scraping.close_connection()
 
     def get_last_episode(self):
-        episode_element_in_podcast_page = self.web_scraping.find_element_by_xpath(
-            '//*[@id="main"]/div/div[4]/div/div/div[1]/div/div/div[1]/div[4]/p[1]/a'
-        )
+        xpath_paths = [
+            '//*[@id="main"]/div/div[4]/div/div/div[1]/div/div/div[1]/div[4]/p[1]/a',
+           '//*[@id="main"]/div/div[3]/div/div/div[1]/div/div/div[1]/div[4]/p[1]/a'
+        ]
+        episode_element_in_podcast_page = None
+        for xpath in xpath_paths:
+            try:
+                episode_element_in_podcast_page = self.web_scraping.find_element_by_xpath(xpath)
+                break
+            except Exception:
+                print('XPath did not match, trying a different one')
+        if episode_element_in_podcast_page is None:
+            raise Exception('Could not find the last episode of the podcast: {}'.format(self.podcast_name))
         self._save_chapter_name(episode_element_in_podcast_page)
 
         return episode_element_in_podcast_page
@@ -65,11 +75,11 @@ class DownloadPodcast:
         self._save_chapter_name(episode_element_in_podcast_page)
 
         return episode_element_in_podcast_page
-    
+
     def _save_chapter_name(self, podcast_page):
         self.episode_name = podcast_page.get_attribute('title')
         print(Fore.GREEN, 'Podcast found! ', Fore.BLUE, self.episode_name)
-            
+
     def _get_audio_url(self):
         episode_audio_page = self.web_scraping.driver.current_url
         self.audio.download_episode_audio(episode_audio_page, self.episode_name)
