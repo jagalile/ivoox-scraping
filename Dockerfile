@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Download and install Chrome browser
 RUN apt-get update -qq \
     && apt-get install -qq -y wget unzip gpg \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /etc/apt/trusted.gpg.d/google-archive-keyring.gpg \
     && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update -qq \
     && apt-get install -qq -y google-chrome-stable \
