@@ -34,3 +34,19 @@ Download the latest episode of specific podcast
 To add new podcast url you only need to modify config file (config.ini). Under `[PODCAST_URL]` section.
 
 `<podcast_key> = '<podcast_url>'`
+
+## Running with Docker
+
+You can build the Docker image by cloning this repository and running:
+
+```bash
+docker build . -t ivoox-scraping
+```
+
+There is also a [ready to use image](https://hub.docker.com/repository/docker/jonazpiazu/ivoox-scraping/general) that you can use.
+
+To run it you can use the following command:
+
+```bash
+docker run -it --rm -v $(pwd)/config.ini:/app/config.ini -v <path_here>/downloaded_podcast_audio:/app/downloaded_podcast_audio ivoox-scraping -p <podcast_key> -latest
+```

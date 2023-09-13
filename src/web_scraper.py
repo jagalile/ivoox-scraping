@@ -3,20 +3,30 @@ import os
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 
 from src.config import Config
-from src.driver import Driver
+
+from pyvirtualdisplay import Display
 
 
 class WebScraper:
-    
+
     def __init__(self, headless=True, muted=True):
         self.config = Config()
-        self.driver_tools = Driver()
         self.headless = headless
         self.muted = muted
+
+        # set xvfb display since there is no GUI in docker container.
+        try:
+            display = Display(visible=0, size=(800, 600))
+            display.start()
+        except Exception as e:
+            print('Could not use xvfb display, will try to continue anyway. Error: {}'.format(e))
+
         self.options = self._set_webdriver_options
-        self.driver = self._chromedriver_driver
+        service = Service()
+        self.driver = webdriver.Chrome(service=service, options=self.options)
 
     @property
     def _set_webdriver_options(self):
@@ -26,25 +36,10 @@ class WebScraper:
             options.add_argument("--headless")
         if self.muted:
             options.add_argument("--mute-audio")
-        
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
         return options
 
-    @property
-    def _chromedriver_driver(self):
-        try:
-            return webdriver.Chrome(self._driver_path(), chrome_options=self.options)
-        except:
-            self.driver_tools.get_driver()
-            return webdriver.Chrome(self._driver_path(), chrome_options=self.options)
-
-    def _driver_path(self):
-        driver_path = os.path.join(os.path.dirname(__file__).replace('src', 'chromedriver'), 'chromedriver')
-        
-        if os.path.isfile(driver_path):
-            return driver_path
-        else:
-            raise Exception('Chromedriver missing!')
- 
     def start_connection(self, url):
         self.driver.get(url)
 
@@ -53,7 +48,7 @@ class WebScraper:
             self.driver.execute_script("arguments[0].click();", element)
         except WebDriverException:
             print('Element is not clickable')
-     
+
     def find_element_by_partial_text(self, chapter_search_name):
         return self.driver.find_element(By.PARTIAL_LINK_TEXT, chapter_search_name)
 
@@ -65,6 +60,6 @@ class WebScraper:
 
     def find_element_by_id(self, html_id):
         return self.driver.find_element(By.ID, html_id)
-    
+
     def close_connection(self):
         self.driver.quit()
